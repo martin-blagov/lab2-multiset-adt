@@ -29,7 +29,7 @@ public class BST {
 
 
     public boolean isEmpty() {
-        return false; // TODO implement me!
+        return (this.root == null);
     }
 
     public boolean contains(int item) {
@@ -47,33 +47,131 @@ public class BST {
 
 
     public void insert(int item) {
-
+        /*Insert <item> into this tree.
+        */
+        if (this.isEmpty())
+        {
+            // make new leaf
+            this.root = item;
+            this.left= new BST();
+            this.right=new BST();
+        } else if (item <= this.root) {
+            this.left.insert(item);
+        }
+        else {
+            this.right.insert(item);
+        }
     }
 
 
     public void delete(int item) {
+        /*Remove *one* occurrence of <item> from this BST.
 
+        Do nothing if <item> is not in the BST.
+        */
+        if (this.isEmpty()) {
+            return;
+        }
+        else if (item == this.root) {
+            this.deleteRoot();
+        }
+        else if (item < this.root) {
+            this.left.delete(item);
+        }
+        else {
+            this.right.delete(item);
+        }
     }
 
     private void deleteRoot() {
+        /* Remove the root of this tree.
+
+        Precondition: this tree is *non-empty*.
+
+         */
+        if (this.left.isEmpty() && this.right.isEmpty()){
+            this.root = null;
+            this.right = null;
+            this.left = null;
+        }
+        else if (this.left.isEmpty()){
+            // Promote right subtree
+            this.root = this.right.root;
+            this.right = this.right.right;
+            this.left = this.right.left;
+        }
+        else if (this.right.isEmpty()){
+            // Promote left subtree
+            this.root = this.left.root;
+            this.left = this.left.left;
+            this.right = this.left.right;
+        }
+        else{
+            // Both subtrees are non empty
+            this.root = this.left.extractMax();
+        }
 
     }
 
 
     private int extractMax() {
-        return -1;
+        /* Remove and return the maximum item stored in this tree.
+
+        Precondition: this tree is *non-empty*.
+
+         */
+
+        if (this.right.isEmpty()){
+            int max_item = this.root;
+            // Promote left subtree
+            this.root = this.left.root;
+            this.left = this.left.left;
+            this.right = this.left.right;
+            return max_item;
+        }
+        else
+            return this.right.extractMax();
     }
 
     public int height() {
-        return -1;
+        /* Return the height of this BST
+
+         */
+        if (this.isEmpty()) {
+            return 0;
+        }
+        else {
+            return Math.max(this.left.height(), this.right.height()) + 1;
+        }
     }
 
     public int count(int item) {
-        return -1;
+        /* Return the number of occurences of <item> in BST
+
+         */
+        if (this.isEmpty()) {
+            return 0;
+        }
+        else if (item < this.root) {
+            return this.left.count(item);
+        } else if (item == this.root) {
+            return 1+ this.right.count(item) + this.left.count(item);
+        }
+        else{
+            return this.right.count(item);
+        }
     }
 
     public int getSize() {
-        return -1;
+        /* Return number of items in this BST
+
+         */
+        if (this.isEmpty()) {
+            return 0;
+        }
+        else {
+            return 1 + this.left.getSize() + this.right.getSize();
+        }
     }
 
     public static void main(String[] args) {
